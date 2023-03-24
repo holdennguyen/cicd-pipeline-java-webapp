@@ -61,9 +61,9 @@ pipeline {
                     transfers: [
                         sshTransfer(
                             sourceFiles: 'download-deploy.yaml, hosts',
-                            remoteDirectory: '/etc/ansible',
+                            remoteDirectory: '/playbooks',
                             cleanRemote: false,
-                            execCommand: 'ansible-playbook download-deploy.yaml', 
+                            execCommand: 'ansible-playbook download-deploy.yaml -i hosts', 
                             execTimeout: 120000, 
                         )
                     ], 
