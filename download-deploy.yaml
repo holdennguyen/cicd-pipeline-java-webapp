@@ -5,7 +5,7 @@
 
   tasks:
     - name: Download the war file
-      shell: 'curl -u admin:admin -L "http://172.20.10.202:8081/service/rest/v1/search/assets/download?sort=version&repository=MyLab-RELEASE&maven.groupId=com.mylab&maven.artifactId=MyLab&maven.extension=war" -H "accept: application/json" --output /home/ansibleadmin/latest'
+      shell: 'curl -u admin:admin -L "http://172.20.10.202:8081/service/rest/v1/search/assets/download?sort=version&repository=MyLab-RELEASE&maven.groupId=com.mylab&maven.artifactId=MyLab&maven.extension=war" -H "accept: application/json" --output /home/ansibleadmin/latest.war'
       args:
         chdir: /home/ansibleadmin
 
