@@ -63,7 +63,7 @@ pipeline {
                             sourceFiles: 'download-deploy.yaml, hosts',
                             remoteDirectory: '/playbooks',
                             cleanRemote: false,
-                            execCommand: 'ansible-playbook download-deploy.yaml -i hosts', 
+                            execCommand: 'ansible-playbook /playbooks/download-deploy.yaml -i /playbooks/hosts', 
                             execTimeout: 120000, 
                         )
                     ], 
