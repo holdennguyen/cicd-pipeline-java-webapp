@@ -13,7 +13,7 @@
       copy:
         dest: /home/ansibleadmin/Dockerfile
         content: |
-                FROM tomcat: latest
+                FROM tomcat:latest
                 LABEL Author: "Minhung"
                 ADD ./latest.war /usr/local/tomcat/webapps
                 RUN chmod +x $CATALINA_HOME/bin
