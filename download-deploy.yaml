@@ -1,0 +1,38 @@
+---
+- name: This play is to download the latest .war file from nexus, create Dockerfile, build image & run Docker container
+  hosts: docker
+  become: true
+
+  tasks:
+    - name: Download the war file
+      shell: 'curl -u nexusadmin:nexusadmin -L "http://172.20.10.202:8081/service/rest/v1/search/assets/download?sort=version&repository=MyLab-RELEASE&maven.groupId=com.mylab&maven.artifactId=MyLab&maven.extension=war" -H "accept: application/json" --output /home/ansibleadmin/latest'
+      args:
+        chdir: /home/ansibleadmin
+
+    - name: Create Dockerfile with content
+      copy:
+        dest: /home/ansibleadmin/Dockerfile
+        content: |
+                FROM tomcat: latest
+                LABEL Author: "Minhung"
+                ADD ./latest.war /usr/local/tomcat/webapps
+                RUN chmod +x $CATALINA_HOME/bin
+                EXPOSE 8080
+                CMD ["catalina.sh", "run"]
+
+    - name: Build an image
+      docker_image:
+        name: mylab-image
+        path: /home/ansibleadmin
+        force: yes
+        state: present
+
+    - name: Run the container
+      docker_container:
+        name: mylab-container
+        image: mylab-image:latest
+        state: started
+        recreate: yes
+        published_ports:
+          - 0.0.0.0:8080:8080
+...
