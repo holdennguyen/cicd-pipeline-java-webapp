@@ -26,5 +26,9 @@ systemctl start docker
 # Auto start Docker service after booting
 systemctl enable docker
 
+# Install docker module for Python2 (require for ansible)
+yum install python-pip
+pip install docker-py
+
 # Add user ansible admin to docker group (execute without using sudo)
 usermod -a -G docker ansibleadmin

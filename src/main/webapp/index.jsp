@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Vinay's DevOps Lab</title>
+    <title>Minhung's DevOps Lab</title>
 
 
     <!-- Custom styles for this template -->
@@ -32,7 +32,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Vinay's DevOps AWS Lab</a>
+            <a class="navbar-brand" href="#">Minhung's DevOps Lab</a>
         </div>
         <div class="navbar-collapse collapse">
             <form class="navbar-form navbar-right" role="form">
@@ -52,7 +52,7 @@
 <div class="jumbotron">
     <div class="container">
         <h1>Hello</h1>
-        <p>This is Vinays DevOps AWS Lab</p>
+        <p>This is Minhung's CICD Lab</p>
         <p><a class="btn btn-primary btn-lg" role="button">Learn more &raquo;</a></p>
         <p><a class="btn btn-primary btn-lg" role="button">Success!! more &raquo;</a></p>
     </div>
@@ -62,28 +62,28 @@
     <!-- Example row of columns -->
     <div class="row">
         <div class="col-md-4">
-            <h2>Git,Maven and GitHub</h2>
-            <p>I have used Git for version controlling. Maven as a build tool. I have used GitHub as my source code repository </p>
-            <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-        </div>
-        <div class="col-md-4">
-            <h2>Nexus</h2>
-            <p>I have used Nexus3 as my maven repository manager. Jenkins will publish the artifacts to Nexus after succesful build </p>
+            <h2>Terraform</h2>
+            <p>Using Terraform as IaC tool to provisioning AWS infrastructures (4 EC2 to hosting: Jenkins, Ansible, Nexus, Docker)</p>
             <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
         </div>
         <div class="col-md-4">
             <h2>Jenkins</h2>
-            <p>I have used Jenkins as my continuous integration tool. I used both simple piplelines and declarative pipelines for the automation </p>
+            <p>Declarative pipelines for the automation CICD</p>
+            <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+            <h2>Git,Maven and GitHub</h2>
+            <p>Git for version controlling. Maven as a build tool (Jenkins plugin). GitHub as source code repository </p>
+            <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+            <h2>Nexus</h2>
+            <p>Nexus3 as maven repository manager. Jenkins will publish the artifacts to Nexus after succesful build </p>
             <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
         </div>
         <div class="col-md-4">
             <h2>Ansible</h2>
-            <p>I have used Ansible as my deployment tool. Wrote couple of playbooks using roles and with out roles</p>
-            <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-        </div>
-        <div class="col-md-4">
-            <h2>Terraform</h2>
-            <p>I have used Terraform as my IaC tool. Wrote couple of terraform files to create the EC2 instance which is hosting tomcat server</p>
+            <p>Using Ansible as Jenkins SSH Server to pull artifacts from Nexus and deploy to Dockerhost (build image, run container)</p>
             <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
         </div>
     </div>
@@ -91,7 +91,7 @@
     <hr>
 
     <footer>
-        <p>&copy; vinay's devops lab 2020-2021</p>
+        <p>&copy; holdennguyen</p>
     </footer>
 </div> <!-- /container -->
 
