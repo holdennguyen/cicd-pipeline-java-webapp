@@ -1,6 +1,6 @@
 ---
 - name: This play is to download the latest .war file from nexus, create Dockerfile, build image & run Docker container
-  hosts: docker
+  hosts: dockerhost
   become: true
 
   tasks:
