@@ -60,7 +60,7 @@ pipeline {
                     configName: 'ansible-controller', 
                     transfers: [
                         sshTransfer(
-                            sourceFiles: 'download-deploy.yaml, hosts'
+                            sourceFiles: 'download-deploy.yaml, hosts',
                             remoteDirectory: '/etc/ansible',
                             cleanRemote: false,
                             execCommand: 'ansible-playbook download-deploy.yaml', 
