@@ -54,19 +54,26 @@ Default output format
 ```
 
 Copy 2 files `main.tf`, `variables.tf` and folder `userdata/` of this Github repo to your working directory. Run these following commands to start provisioning:
+> Before run terraform, login to AWS console and create keypair name `ec2`. If you want to use other keypair, make sure to update this keypair name in `resource "aws_instance" {key_name}` of `main.tf`
 
 ```
 terraform init
 terraform apply --auto-approve
 ```
 
-You can change CIDRs, instance type, AMI and Security Group ports in `variables.tf`. Scripts in `userdata/` for installing Jenkins, Nexus, Ansible, Docker.
+> Please aware that Nexus server use `instance type: t2.medium` which don't qualify under [AWS free tier](https://aws.amazon.com/free/)
+
+> To be simple, we will not assign static IP (AWS EIP) for our servers in this lab. So be aware that the public IP will be change if you restart instance.
+
+You can change `CIDRs`, `instance type`, `AMI` and `Security Group ports` in `variables.tf`. Scripts in `userdata/` for installing [Jenkins](/userdata/InstallJenkins.sh), [Nexus](/userdata/InstallNexus.sh), [Ansible](/userdata/InstallAnsibleController.sh), [Docker](/userdata/InstallDocker.sh).
 
 > These installing scripts are written for AMI `Amazon Linux 2 AMI (HVM) - Kernel 5.10, SSD Volume Type`.
 
-#### User and SSH Configuration for Ansible
+### User account and SSH Configuration
 
-You will notice these configuration in Ansible and Docker userdata.
+All provisioned EC2 use same keypair `ec2.pem` which is manual created on AWS console. `Jenkins Server` and `Nexus Server` use the default user of AWS EC2 (**ec2-user**)
+
+You will notice these configuration in [Ansible](/userdata/InstallAnsibleController.sh) and [Docker](/userdata/InstallDocker.sh) userdata.
 
 ```
 # Add user ansible admin
@@ -84,14 +91,166 @@ sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_
 systemctl restart sshd
 ```
 
-Use specific user account for Ansible in Ansible controller and these managed node. This practice could help us limit the privileges of that account to only what is necessary for Ansible or tracking Ansible activity.
+Use specific user account for Ansible (**ansibleadmin**) in Ansible controller and these managed node. This practice could help us limit the privileges of that account to only what is necessary for Ansible or tracking Ansible activity.
 
-Enable Password Authentication for SSH will help us grant SSH access easier between Jenkins Server, Ansible Controller and Docker host (Ansible managed node).
+Enable `PasswordAuthentication` for SSH will help us grant SSH access easier between `Jenkins Server`, `Ansible Controller` and `Docker host` (Ansible managed node).
 
 That's all you need to know to start! 🎉
 
-### 📝 Setup Jenkins
+### Created AWS Resources
 
+4 EC2 with public IP addressed & internet connectivity.
+![EC2](/docs/images/terraform-provisioned.png)
+
+SG with inbound ports: `22`, `443`, `80`, `8081`, `8080`
+> You can create specific SG with necessary ports for each EC2 instance instead of combine these ports in 1 SG.
+
+
+## 📝 Create Jenkins pipeline
+
+### Setup first time use
+
+Open `http://[Jenkins-Server Public IPv4]:8080` on web browser
+![Jenkins Login](/docs/images/jenkins-login.png)
+
+Follow instruction to get the initial Administrator password by run
+`sudo cat /var/lib/jenkins/secrets/initialAdminPassword` on Jenkins-server CLI.
+
+Install suggested plugins for Jenkins
+![Suggested Plugins](/docs/images/suggested-plugins.png)
+
+After install, create your Jenkins account and domain configuration. We can start to use Jenkins
+![Jenkins Ready](/docs/images/jenkins-ready.png)
+
+### Create job
+
+Click `+ New Item` or `Create a job`, enter a name and choose `Pipeline`. Then `Ok`:
+![Create Pipeline](/docs/images/create-pipeline.png)
+
+Scroll down to `Pipeline` section. 
+- In `Definition`, select `Pipeline script from SCM` (We will pull Jenkinsfile from Source Code Management instead of type in Jenkinsfile context directly in this pipeline)
+- In `SCM`, select `Git` (Suggested plugin we have installed contain Git plugin, allow us to poll, fetch, checkout and merge contents of git repositories.)
+- In `Repository URL`, paste your Github repo URL 
+![Github URL](/docs/images/repository.png)
+>We checkout public repository with HTTPS so leave `Credentials` as `- none -`.
+- In `Branch Specifier (blank for 'any')`, change to `*/main`
+
+Click `Apply` and `Save`
+
+> When run pipeline, Jenkins server will clone your git repository to workspace path on agent machine which run the pipeline. In this case, workspace path will be `/var/lib/jenkins/workspace/[Job name]` on Jenkins server EC2.
+
+### Explain Jenkinsfile
+
+#### Maven build
+To use Maven to build artifacts from Java source code, we need to install Maven plugin. Go to `Manage Jenkins` > `Plugin Manager` > `Available plugins`, search and install `Maven Integration`:
+![Maven Plugin](/docs/images/maven-plugin.png)
+
+After install successfully, go to `Manage Jenkins` > `Global Tool Configuration`. Click `Add Maven`, enter `Name`. (You can select other version of Maven if you want)
+![Maven Configure](/docs/images/maven-configure.png)
+Click `Apply` and `Save`
+
+These line below in Jenkinsfile will configure pipeline install Maven (`maven` in `''` is your `Name` you input in `Global Tool Configuration`)
+```
+tool {
+  maven 'maven'
+}
+```
+and use command `mvn clean install package` to build Java project:
+```
+stages {
+        stage('Build') {
+            steps {
+                sh 'mvn clean install package'
+            }
+        }
+        ...
+}
+```
+
+#### pom.xml
+As you can see, there is a `pom.xml` file in Github repository. We will define some information for our build artifact and update version everytime we want to update our project here. You can find more information about POM [here](https://maven.apache.org/guides/introduction/introduction-to-the-pom.html#).
+
+```
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.mylab</groupId>
+  <artifactId>MyLab</artifactId>
+  <packaging>war</packaging>
+  <version>0.0.1</version>
+  <name>MyLab</name>
+  <url>http://maven.apache.org</url>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <finalName>${project.artifactId}-${project.version}</finalName>
+  </build>
+</project>
+```
+
+To print these artifact information when we update and run pipeline, we will use environment variables in Jenkinsfile to get context from `pom.xml` file dynamically.
+Install plugin `Pipeline Utility Steps`:
+![Pipeline Utility Steps](/docs/images/pipeline-utility-steps.png)
+
+In `Jenkinsfile`, these line will be get context from `pom.xml` of repository:
+```
+environment {
+        ArtifactId = readMavenPom().getArtifactId()
+        Version = readMavenPom().getVersion()
+        GroupId = readMavenPom().getGroupId()
+        Name = readMavenPom().getName()
+    }
+```
+
+and print out when run pipeline:
+```
+stage('Print Environment variables') {
+            steps {
+                echo "Artifact ID is '${ArtifactId}'"
+                echo "Group ID is '${GroupId}'"
+                echo "Version is '${Version}'"
+                echo "Name is '${Name}'"
+            }
+        }
+```
+
+#### Publish artifacts to Nexus repository
+
+We will need store `RELEASE`/`SNAPSHOT` version everytime we update source code of java web. Here is how we do that using **Sonatype Nexus**
+
+Open `http://[Nexus-Server Public IPv4]:8081` on web browser. Click `Login` on the upper-right corner.
+
+Follow instruction to get the initial admin password by run
+`sudo cat /opt/sonatype-work/nexus3/admin.password` on Nexus-server CLI.
+
+![Nexus Login](/docs/images/nexus-login.png)
+
+Continue to setup for first-time use. Choose `Enable anonymous access`.
+
+> By default, Nexus has already provide us two repo `maven-releases` and `maven-snapshots`. Use can skip these step below if you want to use default repo. Just make sure remmeber these name to declare in the Jenkinsfile
+
+Click to `Gear icon ⚙️` on top bar, then select `Repositories` on left-hand side. Choose `Create repository`
+![Create Repository](/docs/images/create-nexus-repo.png)
+
+Select Recipe: `maven2 (hosted)`
+![Select Repository](/docs/images/select-nexus-repo.png)
+
+Enter name: `MyLab-RELEASE` and choose `What type of artifacts does this repository store?` is `Release`
+![RELEASE Repository](/docs/images/release-repo.png)
+
+Repeat these steps above to create another repo with name: `MyLab-SNAPSHOT` and choose `What type of artifacts does this repository store?` is `Snapshot`
+![SNAPSHOT Repository](/docs/images/snapshot-repo.png)
+
+Return to your Nexus Browser tab and the result should be like that:
+![Nexus Browser](/docs/images/nexus-browser.png)
+
+Our goal is setup Jenkins pipeline to publish maven build artifact to Nexus repo, 
 
 
 ### 🐳 Docker-way to quick start
