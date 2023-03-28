@@ -130,7 +130,7 @@ Click `+ New Item` or `Create a job`, enter the name (**JavaWeb**) and choose `P
 Scroll down to the `Pipeline` section. 
 - In `Definition`, select `Pipeline script from SCM` (We will pull Jenkinsfile from Source Code Management instead of typing in Jenkinsfile context directly in this pipeline)
 - In `SCM`, select `Git` (Suggested plugin we have installed contains the Git plugin, allowing us to poll, fetch, checkout, and merge contents of git repositories.)
-- In `Repository URL`, paste your Github repo URL 
+- In `Repository URL`, paste your Github repo URL
 ![Github URL](/docs/images/repository.png)
 >We check out our public repository with HTTPS so leave `Credentials` as `- none -`.
 - In `Branch Specifier (blank for 'any')`, change to `*/main`
