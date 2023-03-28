@@ -572,4 +572,6 @@ Go to your working directory which is run `terraform` earlier, run this command 
 terraform destroy --auto-approve
 ```
 
+Open AWS Console to verify again. ![Terminate](/docs/images/terminate.png)
+
 *Good Luck!!!* 👏 👏 👏
