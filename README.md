@@ -544,4 +544,32 @@ So, we are complete create a CI/CD pipeline for Java web app!✌️
 
 ## ⭐️ Test the result
 
-Open Jenkins, run our pipeline
+Open Jenkins, run our pipeline. The result should be successful like that:
+![Jenkins Successful](/docs/images/pipeline-successful.png)
+
+Open Nexus, select our created release repository. The result should be like that:
+![Nexus Successful](/docs/images/nexus-successful.png)
+
+Test our web app by enter `http://[Your Dockerhost Public IP]:8080/latest/` on web browser
+![Web App](/docs/images/web-app.png)
+
+Now, everytime you change your Web app source code, just push to GitHub repository and go to Jenkins pipeline and click `Build Now`. New version of web app will be deployed automatically.
+
+> You can also automate step click `Build Now` in Jenkins by go to `Configuration` in your pipeline. Select `Poll SCM` in section `Build Trigger` and define the schedule. Click to the `?` sign to read the schedule instruction.
+
+#### Troubleshooting
+
+If your pipeline trigger error, open `Console Output` of this `build #` to identy find which stage have issue. 
+![Troubleshooting](/docs/images/troubleshoot.png)
+
+Manual perform this step on corresponding server to troubleshooting.
+
+#### Clean up AWS Infrastructure
+
+AWS resource will cost you per hours, so please remember to clean up after you finished.
+Go to your working directory which is run `terraform` earlier, run this command to clean up:
+```
+terraform destroy --auto-approve
+```
+
+*Good Luck!!!* 👏 👏 👏
