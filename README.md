@@ -9,7 +9,7 @@
 ## ⚡️ Overview
 
 CI/CD pipeline with Jenkins includes these tasks:
-- Pull web app source code and Jenkinsfile to Jenkins server from GitHub.
+- Pull web app source code, Jenkinsfile, Ansible playbook, Ansible inventory to Jenkins Server from GitHub.
 - Install & build artifacts with Maven on the Jenkins server.
 - Publish artifacts to the Nexus repository in the Nexus server.
 - Use Ansible to download the latest artifacts in the Nexus repository to the Docker host and deploy them on the Docker container.
