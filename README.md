@@ -283,7 +283,6 @@ After installing the plugin. Open our created Jenkins pipeline, which is `JavaWe
 
 - Artifacts: click `Add`. ![artifact](/docs/images/artifact.png)
 
-
 > We use these `${environment variable}` instead of hard code to update information in `pom.xml` dynamically.
 
 Click `Generate Pipeline Script`, and we will have:
@@ -319,6 +318,8 @@ stage('Publish to Nexus') {
 ```
 
 >`def NexusRepo = Version.endsWith("SNAPSHOT") ? "MyLab-SNAPSHOT" : "MyLab-RELEASE"` used to select `Nexus repo` based on `version` in the `pom.xml` file. 
+
+> In case we want to backup our artifact instead of release, just add `SNAPSHOT` at `<version>` in file `pom.xml`. Example: `<version>`0.0.1-SNAPSHOT`</version>`
 
 #### Configure Ansible Controller to Jenkins pipeline.
 The deployment stage in the pipeline will use Ansible. Before that, we need to add a Credential for `Jenkins Server` access to `Ansible Controller`.
