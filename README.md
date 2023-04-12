@@ -142,7 +142,7 @@ Click `Apply` and `Save`
 ### Explain Jenkinsfile
 
 #### Maven build
-To use Maven to build artifacts from Java source code, we need to install Maven plugin. Go to `Manage Jenkins` > `Plugin Manager` > `Available plugins`, search and install `Maven Integration`:
+To use Maven to build artifacts from Java source code, we need to install Maven plugin. Go to `Manage Jenkins` > `Manage Plugins` > `Available plugins`, search and install `Maven Integration`:
 ![Maven Plugin](/docs/images/maven-plugin.png)
 
 After install successfully, go to `Manage Jenkins` > `Global Tool Configuration`. Click `Add Maven`, enter `Name`. (You can select other version of Maven if you want)
