@@ -58,6 +58,7 @@ Copy 2 files `main.tf`, `variables.tf`, and folder `userdata/` of this Github re
 
 ```
 terraform init
+terraform plan
 terraform apply --auto-approve
 ```
 
