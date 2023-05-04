@@ -6,6 +6,14 @@
 
 <p align="center"><a href="https://www.terraform.io/" target="_blank"><img src="https://img.shields.io/badge/-Terraform-7B42BC?logo=terraform&logoColor=white" alt="terraform" /></a>&nbsp;<a href="https://www.jenkins.io/" target="_blank"><img src="https://img.shields.io/badge/-Jenkins-D24939?logo=jenkins&logoColor=white" alt="jenkins" /></a>&nbsp;<a href="https://www.ansible.com/" target="_blank"><img src="https://img.shields.io/badge/-Ansible-EE0000?logo=ansible&logoColor=white" alt="ansible" /></a>&nbsp;<a href="https://www.docker.com/" target="_blank"><img src="https://img.shields.io/badge/-Docker-2496ED?logo=docker&logoColor=white" alt="Docker" /></a>&nbsp;<a href="https://aws.amazon.com/" target="_blank"><img src="https://img.shields.io/badge/-Amazon%20AWS-FF9900?logo=amazon-aws&logoColor=white" alt="AWS" /></a></p>
 
+<p align="center">
+    <b>LANGUAGE</b>
+</p>
+<p align="center">
+    <a href="README.md"><img src="/docs/images/us.png" width="25"></a>
+    <a href="README-vi.md"><img src="/docs/images/vi.png" width="25"></a>
+</p>
+
 ## 💝 Source
 
 GitHub: https://github.com/vinaysdevopslab/MyLab <br>
@@ -77,11 +85,11 @@ You can change `CIDRs`, `instance type`, `AMI`, and `Security Group ports` in `v
 
 ### Created AWS Resources
 
-4 EC2 with public IP addressed & internet connectivity.
+4 EC2 instances with public IP addressed & internet connectivity.
 ![EC2](/docs/images/terraform-provisioned.png)
 
-SG with inbound ports: `22`, `443`, `80`, `8081`, `8080`
-> You can create a specific SG with the necessary ports for each EC2 instance instead of combining these ports in 1 SG.
+SG allow inbound ports: `22`, `443`, `80`, `8081`, `8080`
+> You can create specific SG with the necessary ports for each EC2 instance instead of combining these ports in 1 SG.
 
 ### User account and SSH Configuration
 
@@ -143,7 +151,7 @@ Scroll down to the `Pipeline` section.
 
 Click `Apply` and `Save`
 
-> When running the pipeline, the Jenkins server will clone your git repository to the workspace path on the agent machine which runs the pipeline. In this case, the workspace path will be `/var/lib/jenkins/workspace/[Job name]` on Jenkins server EC2.
+> When running the pipeline, the Jenkins will clone your git repository to the workspace path on the agent machine which runs the pipeline. In this case, the workspace path will be `/var/lib/jenkins/workspace/[Job name]` on Jenkins server EC2 instance.
 
 ### Explain Jenkinsfile
 
@@ -242,7 +250,7 @@ Follow instructions to get the initial admin password by run
 Continue to set up new passwords for first-time use. Choose `Enable anonymous access`.
 In this instruction, my `Nexus account` is **admin** with password **admin**
 
-> By default, Nexus has already provided us with two repo `maven-releases` and `maven-snapshots`. Use can skip these steps below if you want to use the default repo. Just make sure to remember these names to declare in the `Jenkinsfile`
+> By default, Nexus has already provided us with two repo `maven-releases` and `maven-snapshots`. You can skip these steps below if you want to use the default repo. Just make sure to remember these names to declare in the `Jenkinsfile`
 
 Click on `Gear icon ⚙️` on the top bar, then select `Repositories` on the left-hand side. Choose `Create repository`
 ![Create Repository](/docs/images/create-nexus-repo.png)
@@ -273,7 +281,7 @@ First, we need to `Add Credentials` to access `Nexus repositories`.
 Click `Create`
 ![Nexus Credential2](/docs/images/nexus-credential2.png)
 
-Then, install the `Nexus Artifact Uploader` plugin on Jenkins Server:
+Then, install the `Nexus Artifact Uploader` plugin on Jenkins:
 ![Nexus Plugin](/docs/images/nexus-plugin.png)
 
 After installing the plugin. Open our created Jenkins pipeline, which is `JavaWeb` as I named it before. On the left-sidebar, select `Pipeline Syntax` > `Snippet Generator` to generate the syntax of `Jenkinsfile`. Choose `Sample Step` is `nexusArtifactUploader: Nexus Artifact Uploader`
@@ -472,7 +480,7 @@ Check out my playbook file on the Github repo `download-deploy.yaml`.
 curl -u [Nexus account]:[Nexus password] -L "http://[Your Nexus-Server Private IP]:8081/service/rest/v1/search/assets/download?sort=version&repository=[Nexus repository name]&maven.groupId=[groupID in pom.xml]&maven.artifactId=[artifactId in pom.xml]&maven.extension=[packaging in pom.xml]" -H "accept: application/json" --output /home/ansibleadmin/latest.war'
 ```
 
-In my ansible playbook, it will look like this:
+In ansible playbook file, it will look like this:
 
 ```
 ...
