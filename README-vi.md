@@ -167,7 +167,7 @@ tool {
   maven 'maven'
 }
 ```
-and use the command `mvn clean install package` to build a Java project:
+và dùng lệnh `mvn clean install package` để build Java project:
 ```
 stages {
         stage('Build') {
